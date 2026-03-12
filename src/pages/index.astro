@@ -19,7 +19,7 @@ const filteredStories = storyDetails.filter((story: any) => {
   if (!story || !story.title || story.type !== 'story') return false;
   const titleLower = story.title.toLowerCase();
   return aiKeywords.some(keyword => titleLower.includes(keyword));
-}).slice(0, 12);
+});
 
 const today = new Date().toLocaleDateString('en-US', { 
   weekday: 'long', 
@@ -45,18 +45,18 @@ function getEmoji(title: string): string {
 
 function getCardStyle(index: number): { gradient: string; accent: string } {
   const styles = [
-    { gradient: 'from-slate-800 via-purple-800 to-slate-800', accent: 'from-purple-500 to-pink-500' },
-    { gradient: 'from-slate-800 via-amber-800 to-slate-800', accent: 'from-amber-500 to-orange-500' },
-    { gradient: 'from-slate-800 via-rose-800 to-slate-800', accent: 'from-rose-500 to-red-500' },
-    { gradient: 'from-slate-800 via-emerald-800 to-slate-800', accent: 'from-emerald-500 to-teal-500' },
-    { gradient: 'from-slate-800 via-cyan-800 to-slate-800', accent: 'from-cyan-500 to-blue-500' },
-    { gradient: 'from-slate-800 via-violet-800 to-slate-800', accent: 'from-violet-500 to-purple-500' },
-    { gradient: 'from-slate-800 via-pink-800 to-slate-800', accent: 'from-pink-500 to-rose-500' },
-    { gradient: 'from-slate-800 via-blue-800 to-slate-800', accent: 'from-blue-500 to-indigo-500' },
-    { gradient: 'from-slate-800 via-teal-800 to-slate-800', accent: 'from-teal-500 to-cyan-500' },
-    { gradient: 'from-slate-800 via-orange-800 to-slate-800', accent: 'from-orange-500 to-amber-500' },
-    { gradient: 'from-slate-800 via-indigo-800 to-slate-800', accent: 'from-indigo-500 to-blue-500' },
-    { gradient: 'from-slate-800 via-red-800 to-slate-800', accent: 'from-red-500 to-pink-500' },
+    { gradient: 'from-slate-800 via-purple-800 to-slate-800', accent: 'purple' },
+    { gradient: 'from-slate-800 via-amber-800 to-slate-800', accent: 'amber' },
+    { gradient: 'from-slate-800 via-rose-800 to-slate-800', accent: 'rose' },
+    { gradient: 'from-slate-800 via-emerald-800 to-slate-800', accent: 'emerald' },
+    { gradient: 'from-slate-800 via-cyan-800 to-slate-800', accent: 'cyan' },
+    { gradient: 'from-slate-800 via-violet-800 to-slate-800', accent: 'violet' },
+    { gradient: 'from-slate-800 via-pink-800 to-slate-800', accent: 'pink' },
+    { gradient: 'from-slate-800 via-blue-800 to-slate-800', accent: 'blue' },
+    { gradient: 'from-slate-800 via-teal-800 to-slate-800', accent: 'teal' },
+    { gradient: 'from-slate-800 via-orange-800 to-slate-800', accent: 'orange' },
+    { gradient: 'from-slate-800 via-indigo-800 to-slate-800', accent: 'indigo' },
+    { gradient: 'from-slate-800 via-red-800 to-slate-800', accent: 'red' },
   ];
   return styles[index % styles.length];
 }
@@ -72,7 +72,7 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
     
     <main class="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-12">
       <!-- Header -->
-      <header class="text-center mb-16">
+      <header class="text-center mb-12">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-white/50 mb-6">
           <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
           {today}
@@ -84,40 +84,78 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
         <p class="text-white/30 text-lg">Click any card to flip • Scroll to explore</p>
       </header>
 
+      <!-- Legend & Controls -->
+      <div class="mb-8 space-y-4">
+        <!-- Legend -->
+        <div class="inline-flex flex-wrap items-center justify-center gap-4 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm">
+          <span class="text-white/50">Legend:</span>
+          <span class="flex items-center gap-1"><span class="text-yellow-400">⭐</span> Points (upvotes)</span>
+          <span class="flex items-center gap-1"><span class="text-blue-400">💬</span> Comments</span>
+          <span class="flex items-center gap-1"><span class="text-green-400">👤</span> Author</span>
+          <span class="flex items-center gap-1"><span class="text-purple-400">🔗</span> Source</span>
+        </div>
+        
+        <!-- Filters -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <select id="sort-select" class="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-white text-sm focus:outline-none focus:border-white/30">
+            <option value="score" class="bg-zinc-900">Sort by: Points</option>
+            <option value="comments" class="bg-zinc-900">Sort by: Comments</option>
+            <option value="time" class="bg-zinc-900">Sort by: Newest</option>
+          </select>
+          
+          <select id="filter-select" class="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-white text-sm focus:outline-none focus:border-white/30">
+            <option value="all" class="bg-zinc-900">All Topics</option>
+            <option value="openai" class="bg-zinc-900">OpenAI</option>
+            <option value="google" class="bg-zinc-900">Google</option>
+            <option value="meta" class="bg-zinc-900">Meta</option>
+            <option value="anthropic" class="bg-zinc-900">Anthropic</option>
+            <option value="microsoft" class="bg-zinc-900">Microsoft</option>
+            <option value="nvidia" class="bg-zinc-900">NVIDIA</option>
+            <option value="security" class="bg-zinc-900">Security</option>
+          </select>
+          
+          <span id="result-count" class="text-white/40 text-sm">{filteredStories.length} stories</span>
+        </div>
+      </div>
+
       <!-- Cards Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredStories.map((story: any, index: number) => {
+      <div id="cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredStories.slice(0, 12).map((story: any, index: number) => {
           const style = getCardStyle(index);
           const emoji = getEmoji(story.title);
           
           return (
-            <div class="flip-card" style={`--delay: ${index * 0.1}s; --accent: linear-gradient(135deg, ${style.accent.replace('from-', '').replace(' to-', ', ')})`}>
+            <div class="flip-card" 
+                 data-score={story.score} 
+                 data-comments={story.descendants || 0} 
+                 data-time={story.time}
+                 data-topic={story.title.toLowerCase()}
+                 style={`--delay: ${index * 0.05}s; --accent: var(--color-${style.accent})`}>
               <div class="flip-card-inner">
                 <!-- Front -->
                 <div class="flip-card-front">
                   <div class={`absolute inset-0 bg-gradient-to-br ${style.gradient} rounded-2xl`}></div>
                   <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M20 20.5V9H-1v22h22v-11.5zM-1-9h22v22h-22v-22z%22 fill=%22%23ffffff%22 fill-opacity=%220.02%22/%3E%3C/svg%3E')] rounded-2xl`}></div>
                   
-                  <!-- Floating emoji -->
-                  <div class="absolute top-4 right-4 text-5xl opacity-20">{emoji}</div>
-                  
                   <!-- Card content -->
                   <div class="relative h-full flex flex-col justify-between p-5">
                     <div>
                       <div class="flex items-center gap-2 mb-3">
-                        <span class="px-2 py-1 rounded-md bg-white/10 text-xs font-medium">{emoji}</span>
-                        <span class="text-white/40 text-xs">{story.score} pts</span>
+                        <span class="text-white/60 text-xs">{emoji} {story.by}</span>
                       </div>
-                      <h3 class="text-base font-semibold leading-snug line-clamp-3" style="font-family: 'DM Sans', sans-serif;">
+                      <h3 class="text-sm font-semibold leading-snug line-clamp-3" style="font-family: 'DM Sans', sans-serif;">
                         {story.title}
                       </h3>
                     </div>
                     
                     <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                      <span class="text-white/40 text-xs">{story.by}</span>
+                      <div class="flex items-center gap-3 text-xs text-white/50">
+                        <span class="flex items-center gap-1">⭐ {story.score}</span>
+                        <span class="flex items-center gap-1">💬 {story.descendants || 0}</span>
+                      </div>
                       <span class="text-white/30 text-xs flex items-center gap-1">
                         Flip
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
                       </span>
@@ -131,22 +169,36 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
                 <!-- Back -->
                 <div class="flip-card-back">
                   <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-2xl"></div>
-                  <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2220%22 height=%2220%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h20v20H0V0zm1 1h18v18H1V1z%22 fill=%22%23ffffff%22 fill-opacity=%220.03%22/%3E%3C/svg%3E')] rounded-2xl`}></div>
                   
-                  <div class="relative h-full flex flex-col p-5">
-                    <div class="flex items-center gap-2 mb-4">
-                      <span class="px-2 py-1 rounded-md bg-white/10 text-xs font-medium">📖 Summary</span>
+                  <div class="relative h-full flex flex-col p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="text-xs text-white/40">Summary</span>
                     </div>
                     
-                    <div class="flex-1 flex flex-col justify-center">
-                      <p class="text-white/70 text-sm leading-relaxed mb-4" style="font-family: 'DM Sans', sans-serif;">
-                        {story.title.slice(0, 100)}{story.title.length > 100 ? '...' : ''}
+                    <div class="flex-1 flex flex-col justify-center space-y-3">
+                      <p class="text-white/80 text-sm leading-relaxed" style="font-family: 'DM Sans', sans-serif;">
+                        {story.title.slice(0, 80)}{story.title.length > 80 ? '...' : ''}
                       </p>
                       
-                      <div class="space-y-2 text-white/50 text-xs">
-                        <p>💬 {story.descendants || 0} comments</p>
-                        <p>⭐ {story.score} points</p>
-                        <p>👤 {story.by}</p>
+                      <div class="pt-3 space-y-2 text-xs">
+                        <div class="flex items-center justify-between text-white/60">
+                          <span class="flex items-center gap-1">💬 Comments</span>
+                          <span>{story.descendants || 0}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-white/60">
+                          <span class="flex items-center gap-1">⭐ Points</span>
+                          <span>{story.score}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-white/60">
+                          <span class="flex items-center gap-1">👤 Author</span>
+                          <span>{story.by}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-white/60">
+                          <span class="flex items-center gap-1">🔗 Source</span>
+                          <span class="truncate max-w-[120px]">
+                            {story.url ? new URL(story.url).hostname.replace('www.','') : 'HN Discussion'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
@@ -154,8 +206,7 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
                       href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
                       target="_blank"
                       rel="noopener"
-                      class="mt-4 py-3 px-4 rounded-xl bg-gradient-to-r text-center font-medium text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
-                      style={`background: ${style.accent.replace('from-', 'var(--accent-start, ').replace(' to-', '), var(--accent-end, ')}`}
+                      class="mt-3 py-2.5 px-4 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-center text-xs font-medium transition-all duration-200"
                     >
                       Read Full Story →
                     </a>
@@ -182,13 +233,28 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
 
 <style is:global>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+  
+  :root {
+    --color-purple: #a855f7;
+    --color-amber: #f59e0b;
+    --color-rose: #f43f5e;
+    --color-emerald: #10b981;
+    --color-cyan: #06b6d4;
+    --color-violet: #8b5cf6;
+    --color-pink: #ec4899;
+    --color-blue: #3b82f6;
+    --color-teal: #14b8a6;
+    --color-orange: #f97316;
+    --color-indigo: #6366f1;
+    --color-red: #ef4444;
+  }
 </style>
 
 <style>
   .flip-card {
     perspective: 1000px;
-    height: 280px;
-    animation: fadeInUp 0.6s ease-out backwards;
+    height: 220px;
+    animation: fadeInUp 0.5s ease-out backwards;
     animation-delay: var(--delay);
   }
   
@@ -208,7 +274,7 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
   }
   
@@ -238,6 +304,10 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  
+  select option {
+    background: #18181b;
   }
 </style>
 
@@ -322,4 +392,65 @@ function getCardStyle(index: number): { gradient: string; accent: string } {
       card.classList.toggle('flipped');
     });
   });
+  
+  // Filter & Sort
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const filterSelect = document.getElementById('filter-select') as HTMLSelectElement;
+  const cardsGrid = document.getElementById('cards-grid');
+  const resultCount = document.getElementById('result-count');
+  
+  function filterAndSort() {
+    const cards = Array.from(document.querySelectorAll('.flip-card'));
+    const sortBy = sortSelect.value;
+    const filterBy = filterSelect.value;
+    
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+      const el = card as HTMLElement;
+      const topic = el.dataset.topic || '';
+      const score = parseInt(el.dataset.score || '0');
+      const comments = parseInt(el.dataset.comments || '0');
+      const time = parseInt(el.dataset.time || '0');
+      
+      // Filter
+      let show = true;
+      if (filterBy !== 'all' && !topic.includes(filterBy)) {
+        show = false;
+      }
+      
+      if (show) visibleCount++;
+      
+      el.style.display = show ? 'block' : 'none';
+    });
+    
+    // Sort
+    const visibleCards = cards.filter(c => (c as HTMLElement).style.display !== 'none') as HTMLElement[];
+    
+    visibleCards.sort((a, b) => {
+      const aScore = parseInt(a.dataset.score || '0');
+      const aComments = parseInt(a.dataset.comments || '0');
+      const aTime = parseInt(a.dataset.time || '0');
+      const bScore = parseInt(b.dataset.score || '0');
+      const bComments = parseInt(b.dataset.comments || '0');
+      const bTime = parseInt(b.dataset.time || '0');
+      
+      if (sortBy === 'score') return bScore - aScore;
+      if (sortBy === 'comments') return bComments - aComments;
+      if (sortBy === 'time') return bTime - aTime;
+      return 0;
+    });
+    
+    visibleCards.forEach((card, i) => {
+      card.style.setProperty('--delay', `${i * 0.05}s`);
+      cardsGrid?.appendChild(card);
+    });
+    
+    if (resultCount) {
+      resultCount.textContent = `${visibleCount} stories`;
+    }
+  }
+  
+  sortSelect?.addEventListener('change', filterAndSort);
+  filterSelect?.addEventListener('change', filterAndSort);
 </script>
