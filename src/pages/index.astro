@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const HN_API = 'https://hacker-news.firebaseio.com/v0';
+
+// Fetch top stories
+const storiesResponse = await fetch(`${HN_API}/topstories.json`);
+const storyIds = await storiesResponse.json();
+
+// Get top 30 and fetch details
+const topIds = storyIds.slice(0, 30);
+const storyDetails = await Promise.all(
+  topIds.map(async (id: number) => {
+    const res = await fetch(`${HN_API}/item/${id}.json`);
+    return res.json();
+  })
+);
+
+// Filter for AI-related stories
+const aiKeywords = ['ai', 'openai', 'gpt', 'llm', 'model', 'chatgpt', 'anthropic', 'claude', 'gemini', 'mistral', 'deepseek', 'google', 'meta', 'microsoft', 'machine learning', 'neural'];
+const filteredStories = storyDetails.filter((story: any) => {
+  if (!story || !story.title || story.type !== 'story') return false;
+  const titleLower = story.title.toLowerCase();
+  return aiKeywords.some(keyword => titleLower.includes(keyword));
+}).slice(0, 15);
+
+const today = new Date().toLocaleDateString('en-US', { 
+  weekday: 'long', 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+});
+---
+
+<Layout title="AI News | Daily">
+  <main class="max-w-2xl mx-auto px-6 py-12">
+    <header class="mb-12">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight">AI News</h1>
+          <p class="text-zinc-500 dark:text-zinc-400 mt-1">{today}</p>
+        </div>
+        <a 
+          href="https://news.ycombinator.com" 
+          target="_blank"
+          rel="noopener"
+          class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+        >
+          via HN ↗
+        </a>
+      </div>
+    </header>
+
+    <ul class="space-y-3">
+      {filteredStories.map((story: any) => (
+        <li>
+          <a 
+            href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
+            target="_blank"
+            rel="noopener"
+            class="block p-4 rounded-xl bg-white dark:bg-zinc-900 hover:shadow-lg hover:shadow-zinc-200 dark:hover:shadow-zinc-800/50 transition-all duration-200 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 group"
+          >
+            <h2 class="font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {story.title}
+            </h2>
+            <div class="flex items-center gap-3 mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+              <span>{story.score} points</span>
+              <span>·</span>
+              <span>by {story.by}</span>
+              <span>·</span>
+              <span>{story.descendants || 0} comments</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <footer class="mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+      <p class="text-center text-sm text-zinc-400">
+        Refreshed daily at build time
+      </p>
+    </footer>
+  </main>
+</Layout>
